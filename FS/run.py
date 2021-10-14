@@ -19,10 +19,10 @@ def fs_main():
 
 
 @app.route('/fibonacci')
-def fibonacci():
-    number = request.args.get('number')
+def fibonacci_main():
+    number = int(request.args.get('number'))
     return Response(f"The fibonacci sequence for {number} is: "
-                    f"{recursive_fibonacci_helper_function(int(number))}", status=HTTPStatus.OK)
+                    f"{recursive_fibonacci_helper_function(number)}", status=HTTPStatus.OK)
 
 
 def recursive_fibonacci_helper_function(number):
