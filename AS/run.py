@@ -1,3 +1,4 @@
+from http import HTTPStatus
 import json
 import os
 
@@ -5,14 +6,16 @@ from flask import Flask, request, Response
 
 app = Flask(__name__)
 
+home = '/home'
 
-@app.route('/home')
+
+@app.route(home)
 def welcome():
-    return "This is the AS main page."
+    return home
 
 
 @app.route('/', methods=['GET', 'POST'])
-def AS():
+def as_main():
     file = 'address_map.json'
     if request.method == 'GET':
         key = request.args.get('name')
@@ -22,20 +25,20 @@ def AS():
                 if not file_empty:
                     data = json.load(json_file)
                     if key is None or not data.get(key):
-                        return Response("Unknown hostname.", status=404)
+                        return Response("Unknown hostname.", status=HTTPStatus.NOT_FOUND)
                     else:
                         address = data.get(key)
-                        return Response(address, status=200)
+                        return Response(address, status=HTTPStatus.OK)
                 else:
-                    return Response("Empty JSON file.", status=404)
+                    return Response("Empty JSON file.", status=HTTPStatus.NOT_FOUND)
         else:
             with open(file, 'w') as json_file:
                 data = json.load(json_file)
                 if key is None or not data.get(key):
-                    return Response("Unknown hostname.", status=404)
+                    return Response("Unknown hostname.", status=HTTPStatus.NOT_FOUND)
                 else:
                     address = data.get(key)
-                    return Response(address, status=200)
+                    return Response(address, status=HTTPStatus.OK)
 
     else:
         data_get = request.form
@@ -44,9 +47,4 @@ def AS():
         my_dict = {host_name: ip_address}
         with open(file, 'w') as json_file:
             json.dump(my_dict, json_file)
-        return Response("Registered.", status=200)
-
-
-app.run(host='0.0.0.0',
-        port=53533,
-        debug=True)
+        return Response("Registered.", status=HTTPStatus.OK)

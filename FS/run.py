@@ -1,3 +1,5 @@
+from http import HTTPStatus
+
 import requests
 from flask import Flask, request, Response
 
@@ -10,10 +12,9 @@ def welcome():
 
 
 @app.route('/register')
-def register():
-    host_name = request.args.get('hostname')
+def fs_main():
     ip_address = '192.168.1.208'
-    r = requests.post('https://192.168.1.208:53533', data={'name': host_name, 'address': ip_address})
+    r = requests.post(f'https://{ip_address}:53533', data={'name': request.args.get('hostname'), 'address': ip_address})
     return r.text
 
 
@@ -21,7 +22,7 @@ def register():
 def fibonacci():
     number = request.args.get('number')
     return Response(f"The fibonacci sequence for {number} is: "
-                    f"{recursive_fibonacci_helper_function(int(number))}", status=200)
+                    f"{recursive_fibonacci_helper_function(int(number))}", status=HTTPStatus.OK)
 
 
 def recursive_fibonacci_helper_function(number):
@@ -31,8 +32,3 @@ def recursive_fibonacci_helper_function(number):
         return 1
     else:
         return recursive_fibonacci_helper_function(number - 1) + recursive_fibonacci_helper_function(number - 2)
-
-
-app.run(host='0.0.0.0',
-        port=9090,
-        debug=True)
